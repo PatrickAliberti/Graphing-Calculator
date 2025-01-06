@@ -1,0 +1,210 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#contentWrapper {
+    display: flex;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    
+    height: 100vh;
+    width: 100vw;
+    background-color: #ffffff;
+}
+
+#graphCanvas {
+    width: 100vw;
+    height: 100vw;
+    position: absolute;
+}
+
+#functionInputs {
+    height: 100%;
+    width: 28%;
+  
+    position: fixed;
+    top: 47px;
+    left: 0%;
+    
+    transition: .5s;
+    z-index: 2;
+    clip-path: inset(0px -15px 0px 0px);
+    
+    background: white;
+    border-right: 1px solid #b8b8b8;
+    border-top: 1px solid #b8b8b8;
+    box-shadow: 0px 0px 10px #9c9c9c;
+  
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox     */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#functionInputs::-webkit-scrollbar {  display: none;  }
+
+.slide {
+    transform: translate(-100%, 0%);
+    box-shadow: none !important;
+}
+
+.headerSlide {
+    transform: translate(-100%, 0%);  
+    box-shadow: none !important;
+}
+
+.fxInWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    border-bottom: 1px solid #D3D3D3;
+}
+
+.fxInWrapper:focus-within {
+    border-top: 2px solid #8fbaff;
+    border-right: 2px solid #8fbaff;
+    border-bottom: 2px solid #8fbaff;
+}
+
+.fxInWrapper:focus-within .iconBox {
+    width: 44px;
+    background: #8fbaff;
+    border-bottom: 2px solid #8fbaff;
+}
+
+.fxInWrapper:focus-within p {
+    color: white;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.fxInWrapper:focus-within .fxIcon {
+    outline: 4px solid white;
+    box-shadow: none;
+}
+
+.functionInput {
+  height: 65px;
+  width: 88%;
+  margin-left: 40px;
+  padding-left: 6%;
+  
+  font-size: 21px;
+  font-family: KaTeX_Math;
+  
+  outline: none;
+  border: none;
+}
+
+#functionsHeader {
+    height: 47px;
+    width: 28%;
+    left: 0%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3;
+    position: fixed;
+    top: 0%;
+    overflow: visible;
+    
+    transition: .5s;
+    background: #e8e9ed;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b8b8b8;
+}
+
+#clear {
+    height: 30px;
+    width: 30px;
+    margin-left: -5%;
+    margin-top: -35px;
+    position: relative;
+  
+    filter: opacity(25%);
+    cursor: pointer;
+}
+
+#clear:hover {
+    filter: opacity(65%);
+}
+
+#clear:active {
+    filter: opacity(85%);
+}
+
+#addFx {
+    height: 37px;
+    margin-left: 2%;
+    border-radius: 5%;
+    filter: opacity(65%);
+}
+
+#addFx:hover {
+    background: #cccccc;
+    border-radius: 5%;
+}
+
+#addFx:active {
+    background: #b5b5b5;
+}
+
+#chevron {
+    height: 37px;
+    margin-right: 2%;  
+  
+    border-radius: 5%;
+    filter: opacity(65%);
+    transform: rotate(180deg);
+}
+
+#chevron:hover {
+    background: #cccccc;
+}
+
+#chevron:active {
+  background: #b5b5b5;
+}
+
+.chevronSlide {
+  margin-right: -43px !important;
+  
+}
+
+.fxIcon {
+    height: 26px;
+    width: 26px;
+    margin-top: 3px;
+    position: absolute;
+    z-index: 1;
+ 
+    border-radius: 50%;
+    outline: 4px solid #d3d3d3;
+}
+
+.iconBox {
+    width: 43px;
+    height: 65px;
+    margin-top: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+  
+    background: #e8e9ed;
+    border-bottom: 2px solid #e8e9ed;
+    border-right: 1px solid #d3d3d3;
+}
+
+p {
+    position: relative;
+    top: -38%;
+    left: -35%;
+  
+    font-size: 11px;
+    font-family: arial;
+    color: #616161;
+}
