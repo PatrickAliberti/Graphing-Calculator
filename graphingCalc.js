@@ -1,95 +1,10 @@
+import { addFunctionInput } from './inputMenu.js';
+
 function mainLoad() {
     const canvas = document.getElementById("graphCanvas");
     const ctx = canvas.getContext("2d");
     const functionInputs = Array.from(document.querySelectorAll(".functionInput")); // Select all input elements with the class "functionInput"
     const closeButtons = Array.from(document.querySelectorAll(".closeButton")); // Get all close buttons
-  
-    // Input scroll
-    let fxIn = document.getElementById("functionInputs");
-    fxIn.addEventListener("wheel", (event) => {
-        fxIn.style.overflow = "auto";
-    });
-  
-    // Delegate event for dynamically added inputs
-    document.getElementById("functionInputs").addEventListener("input", function(event) {
-        if (event.target.classList.contains("functionInput")) {
-            //redrawPlot();
-        }
-    });
-  
-    // Function to add a new function input
-    function addFunctionInput() {
-        drawGrid();
-        // Get the parent container
-        const functionInputs = document.getElementById("functionInputs");
-
-        // Create a new wrapper div
-        const fxInWrapper = document.createElement("div");
-        fxInWrapper.className = "fxInWrapper";
-      
-        // Create fxIcon
-        const fxIcon = document.createElement("img");
-        fxIcon.className = "fxIcon";
-        fxIcon.src = "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/planner_review/default/24px.svg";
-        fxIcon.alt = "Clear function input";
-        fxIcon.style.display = "none";
-      
-        // Create iconBox
-        const iconBox = document.createElement("div");
-        iconBox.className = "iconBox";
-      
-        // Create iconBox p
-        const p = document.createElement("p");
-
-        // Create the new function input
-        const functionInput = document.createElement("input");
-        functionInput.type = "text";
-        functionInput.className = "functionInput";
-        functionInput.value = ""; // Start with an empty value
-
-        // Create the "X" icon to clear the input
-        const clearButton = document.createElement("img");
-        clearButton.id = "clear";
-        clearButton.src = "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/close/default/24px.svg";
-        clearButton.alt = "Clear function input";
-      
-        fxInWrapper.appendChild(iconBox);
-        fxInWrapper.appendChild(functionInput);
-        fxInWrapper.appendChild(clearButton);
-        iconBox.appendChild(p);
-        iconBox.appendChild(fxIcon);
-        iconBox.firstChild.innerHTML = document.getElementsByClassName("iconBox").length+1;
-        functionInputs.appendChild(fxInWrapper);
-      
-        const clearButtons2 = Array.from(document.querySelectorAll(".fxInWrapper img#clear"));
-        const fxInWrapper4 = document.getElementsByClassName("fxInWrapper");
-        const fxIn4 = document.getElementsByClassName("functionInput");
-        clearButton.addEventListener("click", () => {
-
-          for (let i = $(fxInWrapper).index(); i < fxIn4.length; i++) {
-            if (fxIn4[i].value !== fxIn4[fxIn4.length - 1].value)
-              fxIn4[i].value = fxIn4[i + 1].value;
-          }
-          fxInWrapper4[fxIn4.length - 1].remove();
-          let fxIconArr = document.getElementsByClassName("fxIcon");
-          for (let i = 0; i < fxIn4.length; i++) {
-              if (fxIn4[i].value === "")
-                  fxIconArr[i].style.display = "none";
-              else
-                  fxIconArr[i].style.display = "flex";
-          }
-          redrawPlot();
-
-          let iBoxp = document.getElementsByClassName("p");
-          for (let i = 0; i < iBoxp.length; i++) {
-            iBoxp[i].innerHTML = i + 1;
-          }
-          
-          if (document.getElementsByClassName("fxInWrapper").length === 0)
-              document.getElementById("addFx").click();
-        });
-        redrawPlot();
-    }
 
     // Set canvas size to be twice the display size for retina scaling
     const pixelRatio = window.devicePixelRatio || 1;
@@ -107,7 +22,6 @@ function mainLoad() {
   
     // Input slide out/in
     document.getElementById("chevron").addEventListener("click", () => {
-        fxIn.style.overflow = "visible";
         document.getElementById("functionInputs").classList.toggle('slide');
         document.getElementById("functionsHeader").classList.toggle('headerSlide');
         if (!document.getElementById("chevron").classList.contains("chevronSlide")) {
@@ -260,7 +174,7 @@ function mainLoad() {
             const minX = (-offsetX) / scale;
             const maxX = (canvas.width - offsetX) / scale;
 
-            fxIcon = document.getElementsByClassName("fxIcon");
+            let fxIcon = document.getElementsByClassName("fxIcon");
             fxIcon[ii].style.backgroundColor = colors[ii] + "cc";
             ctx.strokeStyle = colors[index % colors.length]; // Assign color to current function
             ctx.lineWidth = 4;

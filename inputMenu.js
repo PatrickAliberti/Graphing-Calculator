@@ -1,8 +1,5 @@
 // Function to add a new function input
 export function addFunctionInput() {
-    alert("yeet");
-    /*
-    //drawGrid();
     // Get the parent container
     const functionInputs = document.getElementById("functionInputs");
 
@@ -71,6 +68,4 @@ export function addFunctionInput() {
       if (document.getElementsByClassName("fxInWrapper").length === 0)
           document.getElementById("addFx").click();
     });
-    //redrawPlot();
-    */
-}
+  }
