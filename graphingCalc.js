@@ -57,30 +57,14 @@ function mainLoad() {
         notation: 'scientific',
         maximumFractionDigits: 20 // The default is 3, but 20 is the maximum supported by JS according to MDN.
     };
-  
-    // Add event listeners to each "X" icon
-    const clearButtons = Array.from(document.querySelectorAll(".fxInWrapper img#clear"));
-    const fxInWrapper = document.getElementsByClassName("fxInWrapper");
-    const fxIn2 = document.getElementsByClassName("functionInput");
-    clearButtons.forEach((clearButton, index) => {
-      clearButton.addEventListener("click", () => {
-        
-        for (let i = index; i < fxIn2.length; i++) {
-            if (fxIn2[i].value !== fxIn2[fxIn2.length - 1].value)
-                fxIn2[i].value = fxIn2[i + 1].value;
+
+    addFunctionInput();
+
+    // Delegate event for dynamically added inputs
+    document.getElementById("functionInputs").addEventListener("input", function(event) {
+        if (event.target.classList.contains("functionInput")) {
+            redrawPlot();
         }
-        fxInWrapper[fxIn2.length - 1].remove();        
-        redrawPlot();
-       
-        let iBoxp = document.getElementsByClassName("p");
-        for (let i = 0; i < iBoxp.length; i++) {
-            iBoxp[i].innerHTML = i + 1;
-        }
-        
-        //document.getElementById("addFx").click();
-        if (document.getElementsByClassName("fxInWrapper").length === 1)
-            document.getElementById("addFx").click();
-      });
     });
 
     // Initial plot
