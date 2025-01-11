@@ -93,8 +93,8 @@ function mainLoad() {
   
     // Input slide out/in
     document.getElementById("chevron").addEventListener("click", () => {
-        document.getElementById("functionInputs").classList.toggle('slide');
-        document.getElementById("functionsHeader").classList.toggle('headerSlide');
+        document.getElementById("menuWrapper").classList.toggle('slide');
+        
         if (!document.getElementById("chevron").classList.contains("chevronSlide")) {
             setTimeout((myFunction) => {
                 document.getElementById("chevron").classList.toggle('chevronSlide');
@@ -256,10 +256,14 @@ function mainLoad() {
             document.getElementsByClassName("functionInput")[fxInput.length-1].addEventListener("input", () => {
                 fxIcon[index].style.background = colors[index % colors.length];
               
-                if (input.value === "")
+                if (input.value === "") {
+                
                     fxIcon[index].style.display = "none";
-                else
+                }
+                else {
                     fxIcon[index].style.display = "block";
+                    
+                }
             
             });
           
