@@ -24,7 +24,7 @@ function mainLoad() {
     // Calculate initial offsetX to center the screen at the center of the canvas minus the width of the functionInputs div
     const functionInputsWidth = document.getElementById("functionInputs").offsetWidth;
     let offsetX = (canvas.width + functionInputsWidth*1.5) / 2;
-    let offsetY = canvas.height / 2; // Change const to let
+    let offsetY = canvas.height / 2;
 
     function addFunctionInput() {
         // Get the parent container
@@ -111,7 +111,7 @@ function mainLoad() {
     });
   
     // Define variables for zooming and dragging
-    let scale = 40;
+    let scale = 40.0;
   
     const minScale = 1e-1000000000;
     const maxScale = 1e1000000000;
@@ -137,6 +137,7 @@ function mainLoad() {
             redrawPlot();
         }
     });
+
     // Initial plot
     redrawPlot();
   
@@ -354,8 +355,6 @@ function mainLoad() {
         ctx.lineTo(offsetX, canvas.height);
         ctx.stroke();
       
-        plotFunction();
-      
         // Vertical Number labels
         for (let y = Math.floor(minY / stepY) * stepY; y <= maxY + stepY; y += stepY) {
             const canvasY = y * scale + offsetY;
@@ -408,27 +407,18 @@ function mainLoad() {
           
             // Draw numerical label if not too close to the origin or if it's the origin
             if (Math.abs(x) > 1e-1000000000 && x < 0) {
-                ctx.fillStyle = "white";
-                ctx.letterSpacing = "-4.2px";
-                ctx.font = "900 23px arial";
-                ctx.fillText(label, labelX+1, labelY + 1);
-              
                 ctx.letterSpacing = "0px";
                 ctx.fillStyle = "black";
                 ctx.font = "100 20px arial";
                 ctx.fillText(label, labelX, labelY);
             } else {
-                ctx.fillStyle = "white";
-                ctx.letterSpacing = "-4.2px";
-                ctx.font = "900 23px arial";
-                ctx.fillText(label, labelX-2, labelY + 1);
-              
                 ctx.letterSpacing = "0px";
                 ctx.fillStyle = "black";
                 ctx.font = "100 20px arial";
                 ctx.fillText(label, labelX, labelY);
             }
         }
+        plotFunction();
     }
     
     function calculateStepSize(range, canvasSize) {
