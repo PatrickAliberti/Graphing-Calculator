@@ -276,7 +276,6 @@ function mainLoad() {
     function redrawPlot() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawGrid();
-        //alert("yeet");
     }
     
     function drawGrid() {
@@ -361,35 +360,19 @@ function mainLoad() {
           
             // Format label using scientific notation if greater than or equal to 1e9
             let label;
+            y = parseFloat(y.toPrecision(2))
             if (Math.abs(y) >= 1e9)
                 label = new Intl.NumberFormat('en-US', fmt).format(-y);
             else
-                label = parseFloat(-y.toPrecision(15)); // Remove unnecessary zeros
+                label = parseFloat(-y);
     
             const labelX = offsetX + 5;
             const labelY = canvasY - 5;
     
-            if (Math.abs(y) > 1e-1000000000 && y < 0) {
-                ctx.fillStyle = "white";
-                ctx.letterSpacing = "-4.2px";
-                ctx.font = "900 23px arial";
-                ctx.fillText(label, labelX-2, labelY+1);
-                
-                ctx.letterSpacing = "0px";
-                ctx.fillStyle = "black";
-                ctx.font = "100 20px arial";
-                ctx.fillText(label, labelX, labelY);
-            } else {
-                ctx.fillStyle = "white";
-                ctx.letterSpacing = "-4.2px";
-                ctx.font = "900 23px arial";
-                ctx.fillText(label, labelX+1, labelY+1);
-                
-                ctx.letterSpacing = "0px";
-                ctx.fillStyle = "black";
-                ctx.font = "100 20px arial";
-                ctx.fillText(label, labelX, labelY);
-            }
+            ctx.letterSpacing = "0px";
+            ctx.fillStyle = "black";
+            ctx.font = "100 20px arial";
+            ctx.fillText(label, labelX, labelY);
         }
       
         // Horizontal number labels
@@ -397,26 +380,20 @@ function mainLoad() {
             const canvasX = x * scale + offsetX;
             // Format label using scientific notation if greater than or equal to 1e9
             let label = 0;
+            x = parseFloat(x.toPrecision(2));
             if (Math.abs(x) >= 1e9)
                 label = new Intl.NumberFormat('en-US', fmt).format(x);
             else
-                label = parseFloat(x.toPrecision(15)); // Remove unnecessary zeros
+                label = x; // Remove unnecessary zeros
           
             const labelX = canvasX + 5;
             const labelY = offsetY - 5;
           
             // Draw numerical label if not too close to the origin or if it's the origin
-            if (Math.abs(x) > 1e-1000000000 && x < 0) {
-                ctx.letterSpacing = "0px";
-                ctx.fillStyle = "black";
-                ctx.font = "100 20px arial";
-                ctx.fillText(label, labelX, labelY);
-            } else {
-                ctx.letterSpacing = "0px";
-                ctx.fillStyle = "black";
-                ctx.font = "100 20px arial";
-                ctx.fillText(label, labelX, labelY);
-            }
+            ctx.letterSpacing = "0px";
+            ctx.fillStyle = "black";
+            ctx.font = "100 20px arial";
+            ctx.fillText(label, labelX, labelY);
         }
         plotFunction();
     }
@@ -424,7 +401,7 @@ function mainLoad() {
     function calculateStepSize(range, canvasSize) {
         const maxLabels = 15; // Maximum number of labels to display
         const idealStep = range / maxLabels;
-        const magnitude = Math.floor(Math.log10(idealStep));
+        const magnitude = Math.round(Math.log10(idealStep));
         const step = Math.pow(10, magnitude);
         const steps = [1, 2, 5, 10]; // Common step sizes
         let bestStep = 1;
