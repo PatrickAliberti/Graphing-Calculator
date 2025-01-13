@@ -213,39 +213,63 @@ function mainLoad() {
             redrawPlot();
         });
     });
+
+    const functionCache = new Map();
+
+    function redrawPlot() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+    }
   
     function plotFunction() {
         const colors = ["#3366CC", "#DC3912", "#109618", "#990099", "#FF9900"];
-        let ii = 0;
-        document.getElementsByClassName("functionInput").forEach(function(input, index) {
-            if (input.value === "")
-                document.getElementsByClassName("fxIcon")[index].style.display = "none";
-            else
-                document.getElementsByClassName("fxIcon")[index].style.display = "block";
-          
-            const expression = input.value.trim();
-            const compiledExpression = math.compile(expression);
-            const step = 1 / scale;
-            const minX = (-offsetX) / scale;
-            const maxX = (canvas.width - offsetX) / scale;
+        const step = 1 / scale;
+        const minX = (-offsetX) / scale;
+        const maxX = (canvas.width - offsetX) / scale;
     
-            let fxIcon = document.getElementsByClassName("fxIcon");
-            fxIcon[ii].style.backgroundColor = colors[ii] + "cc";
-            ctx.strokeStyle = colors[index % colors.length]; // Assign color to current function
-            ctx.lineWidth = 4;
+        document.querySelectorAll(".functionInput").forEach((input, index) => {
+            const expression = input.value.trim();
+            if (!expression) return; // Skip empty inputs
+    
+            // Compile the expression using math.js
+            const compiledExpression = math.compile(expression);
+    
+            // Initialize or update the cache for this function
+            if (!functionCache.has(index)) {
+                functionCache.set(index, { data: new Map(), expression: compiledExpression });
+            }
+    
+            const cache = functionCache.get(index);
+    
+            // Clear function plot
             ctx.beginPath();
+            ctx.strokeStyle = colors[index % colors.length];
+            ctx.lineWidth = 2;
+    
             let prevX = null;
             let prevY = null;
-            for (let x = minX; x <= maxX; x += step) {
-                let y = compiledExpression.evaluate({ x: x });
+    
+            // Iterate through visible range and plot function
+            for (let x = Math.floor(minX / step) * step; x <= maxX; x += .01) {
+                if (!cache.data.has(x)) {
+                    try {
+                        const y = compiledExpression.evaluate({ x });
+                        cache.data.set(x, y);
+                    } catch (e) {
+                        cache.data.set(x, NaN); // Handle invalid expressions
+                    }
+                }
+    
+                const y = cache.data.get(x);
                 const canvasX = x * scale + offsetX;
                 const canvasY = -y * scale + offsetY;
+    
                 if (!isNaN(y)) {
-                    if (prevX !== null && prevY !== null && Math.abs(canvasY - prevY) < canvas.height / 12)
+                    if (prevX !== null && prevY !== null && Math.abs(canvasY - prevY) < canvas.height / 12) {
                         ctx.lineTo(canvasX, canvasY);
-                    else
+                    } else {
                         ctx.moveTo(canvasX, canvasY);
-                      
+                    }
                     prevX = canvasX;
                     prevY = canvasY;
                 } else {
@@ -253,29 +277,9 @@ function mainLoad() {
                     prevY = null;
                 }
             }
-            let fxInput = document.getElementsByClassName("functionInput");
-            document.getElementsByClassName("functionInput")[fxInput.length-1].addEventListener("input", () => {
-                fxIcon[index].style.background = colors[index % colors.length];
-              
-                if (input.value === "") {
-                
-                    fxIcon[index].style.display = "none";
-                }
-                else {
-                    fxIcon[index].style.display = "block";
-                    
-                }
-            
-            });
-          
-            ctx.stroke();
-            ii++;
-        });
-    }
     
-    function redrawPlot() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawGrid();
+            ctx.stroke();
+        });
     }
     
     function drawGrid() {
@@ -286,6 +290,7 @@ function mainLoad() {
     
         // Horizontal grid lines
         const stepY = calculateStepSize(maxY - minY, canvas.height / scale);
+        const stepX = calculateStepSize(maxX - minX, canvas.width / scale);
         ctx.font = labelFont; // Set font size here
         for (let y = Math.ceil(minY / stepY) * stepY; y <= maxY + stepY; y += stepY) {
             const canvasY = y * scale + offsetY;
@@ -317,7 +322,6 @@ function mainLoad() {
         }
     
         // Vertical grid lines
-        const stepX = calculateStepSize(maxX - minX, canvas.width / scale);
         for (let x = Math.floor(minX / stepX) * stepX; x <= maxX + stepX; x += stepX) {
             const canvasX = x * scale + offsetX;
     
