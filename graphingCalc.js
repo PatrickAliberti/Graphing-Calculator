@@ -210,12 +210,18 @@ function mainLoad() {
 
     functionInputs.forEach(function(input) { // Add event listeners to all function input elements
         input.addEventListener("input", function() {
-            alert("yo");
             redrawPlot();
         });
     });
+
+    const functionCache = new Map();
+
+    function redrawPlot() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+        plotFunctions();
+    }
   
-    
     function plotFunctions() {
         const colors = ["#3366CC", "#DC3912", "#109618", "#990099", "#FF9900"];
         const inputs = Array.from(document.getElementsByClassName("functionInput"));
@@ -280,12 +286,6 @@ function mainLoad() {
         }
     }
     
-    function redrawPlot() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawGrid();
-        plotFunctions();
-    }
-    
     function drawGrid() {
         const minX = (-offsetX) / scale;
         const maxX = (canvas.width - offsetX) / scale;
@@ -294,6 +294,7 @@ function mainLoad() {
     
         // Horizontal grid lines
         const stepY = calculateStepSize(maxY - minY, canvas.height / scale);
+        const stepX = calculateStepSize(maxX - minX, canvas.width / scale);
         ctx.font = labelFont; // Set font size here
         for (let y = Math.ceil(minY / stepY) * stepY; y <= maxY + stepY; y += stepY) {
             const canvasY = y * scale + offsetY;
@@ -325,7 +326,6 @@ function mainLoad() {
         }
     
         // Vertical grid lines
-        const stepX = calculateStepSize(maxX - minX, canvas.width / scale);
         for (let x = Math.floor(minX / stepX) * stepX; x <= maxX + stepX; x += stepX) {
             const canvasX = x * scale + offsetX;
     
@@ -403,7 +403,6 @@ function mainLoad() {
             ctx.font = "100 20px arial";
             ctx.fillText(label, labelX, labelY);
         }
-        plotFunctions();
     }
     
     function calculateStepSize(range, canvasSize) {
@@ -449,6 +448,5 @@ function mainLoad() {
 
         redrawPlot();
     }
-
 }
 document.addEventListener("DOMContentLoaded", mainLoad());
