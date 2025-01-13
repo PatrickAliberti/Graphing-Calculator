@@ -210,76 +210,80 @@ function mainLoad() {
 
     functionInputs.forEach(function(input) { // Add event listeners to all function input elements
         input.addEventListener("input", function() {
+            alert("yo");
             redrawPlot();
         });
     });
-
-    const functionCache = new Map();
-
-    function redrawPlot() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawGrid();
-    }
   
-    function plotFunction() {
+    
+    function plotFunctions() {
         const colors = ["#3366CC", "#DC3912", "#109618", "#990099", "#FF9900"];
+        const inputs = Array.from(document.getElementsByClassName("functionInput"));
+
+        inputs.forEach((input, index) => {
+            const expression = input.value.trim();
+            if (!expression) return;
+
+            try {
+                const compiledExpression = math.compile(expression);
+                plotWithIntervals(compiledExpression, colors[index % colors.length]);
+            } catch (err) {
+                console.error("Error compiling function:", err);
+            }
+        });
+    }
+
+    function plotWithIntervals(compiledExpression, color) {
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 2;
+
         const step = 1 / scale;
         const minX = (-offsetX) / scale;
         const maxX = (canvas.width - offsetX) / scale;
+
+        ctx.beginPath();
+
+        for (let x = minX; x <= maxX; x += step) {
+            const xNext = x + step;
+            const intervalY = evaluateInterval(compiledExpression, x, xNext);
+
+            const canvasX = x * scale + offsetX;
+            const canvasXNext = xNext * scale + offsetX;
+
+            const canvasYMin = -intervalY.min * scale + offsetY;
+            const canvasYMax = -intervalY.max * scale + offsetY;
+
+            // Draw a vertical rectangle that spans the interval
+            ctx.moveTo(canvasX, canvasYMin);
+            ctx.lineTo(canvasX, canvasYMax);
+            ctx.lineTo(canvasXNext, canvasYMax);
+            ctx.lineTo(canvasXNext, canvasYMin);
+            ctx.lineTo(canvasX, canvasYMin);
+        }
+
+        ctx.stroke();
+    }
+
+    function evaluateInterval(compiledExpression, xMin, xMax) {
+        try {
+            const yMin = compiledExpression.evaluate({ x: xMin });
+            const yMax = compiledExpression.evaluate({ x: xMax });
+
+            return {
+                min: Math.min(yMin, yMax),
+                max: Math.max(yMin, yMax),
+            };
+        } catch (err) {
+            console.warn("Error evaluating interval:", err);
+            return { min: Number.NEGATIVE_INFINITY, max: Number.POSITIVE_INFINITY };
+        }
+    }
     
-        document.querySelectorAll(".functionInput").forEach((input, index) => {
-            const expression = input.value.trim();
-            if (!expression) return; // Skip empty inputs
-    
-            // Compile the expression using math.js
-            const compiledExpression = math.compile(expression);
-    
-            // Initialize or update the cache for this function
-            if (!functionCache.has(index)) {
-                functionCache.set(index, { data: new Map(), expression: compiledExpression });
-            }
-    
-            const cache = functionCache.get(index);
-    
-            // Clear function plot
-            ctx.beginPath();
-            ctx.strokeStyle = colors[index % colors.length];
-            ctx.lineWidth = 2;
-    
-            let prevX = null;
-            let prevY = null;
-    
-            // Iterate through visible range and plot function
-            for (let x = Math.floor(minX / step) * step; x <= maxX; x += .01) {
-                if (!cache.data.has(x)) {
-                    try {
-                        const y = compiledExpression.evaluate({ x });
-                        cache.data.set(x, y);
-                    } catch (e) {
-                        cache.data.set(x, NaN); // Handle invalid expressions
-                    }
-                }
-    
-                const y = cache.data.get(x);
-                const canvasX = x * scale + offsetX;
-                const canvasY = -y * scale + offsetY;
-    
-                if (!isNaN(y)) {
-                    if (prevX !== null && prevY !== null && Math.abs(canvasY - prevY) < canvas.height / 12) {
-                        ctx.lineTo(canvasX, canvasY);
-                    } else {
-                        ctx.moveTo(canvasX, canvasY);
-                    }
-                    prevX = canvasX;
-                    prevY = canvasY;
-                } else {
-                    prevX = null;
-                    prevY = null;
-                }
-            }
-    
-            ctx.stroke();
-        });
+    function redrawPlot() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+        plotFunctions();
     }
     
     function drawGrid() {
@@ -290,7 +294,6 @@ function mainLoad() {
     
         // Horizontal grid lines
         const stepY = calculateStepSize(maxY - minY, canvas.height / scale);
-        const stepX = calculateStepSize(maxX - minX, canvas.width / scale);
         ctx.font = labelFont; // Set font size here
         for (let y = Math.ceil(minY / stepY) * stepY; y <= maxY + stepY; y += stepY) {
             const canvasY = y * scale + offsetY;
@@ -322,6 +325,7 @@ function mainLoad() {
         }
     
         // Vertical grid lines
+        const stepX = calculateStepSize(maxX - minX, canvas.width / scale);
         for (let x = Math.floor(minX / stepX) * stepX; x <= maxX + stepX; x += stepX) {
             const canvasX = x * scale + offsetX;
     
@@ -399,7 +403,7 @@ function mainLoad() {
             ctx.font = "100 20px arial";
             ctx.fillText(label, labelX, labelY);
         }
-        plotFunction();
+        plotFunctions();
     }
     
     function calculateStepSize(range, canvasSize) {
@@ -445,5 +449,6 @@ function mainLoad() {
 
         redrawPlot();
     }
+
 }
 document.addEventListener("DOMContentLoaded", mainLoad());
